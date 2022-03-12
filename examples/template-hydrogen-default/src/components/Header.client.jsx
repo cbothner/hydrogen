@@ -4,6 +4,7 @@ import {Link} from '@shopify/hydrogen/client';
 import CartToggle from './CartToggle.client';
 import {useCartUI} from './CartUIProvider.client';
 import CountrySelector from './CountrySelector.client';
+import LanguageSelector from './LanguageSelector.client';
 import Navigation from './Navigation.client';
 import MobileNavigation from './MobileNavigation.client';
 
@@ -35,8 +36,11 @@ export default function Header({collections, storeName}) {
             paddingRight: isCartOpen ? scrollbarWidth : 0,
           }}
         >
-          <div className="text-center w-full flex justify-between items-center">
-            <CountrySelector />
+          <div className="text-center w-full grid grid-cols-3 items-center">
+            <div className="hidden lg:flex justify-start items-center">
+              <CountrySelector />
+              <LanguageSelector />
+            </div>
             <MobileNavigation
               collections={collections}
               isOpen={isMobileNavOpen}
@@ -48,11 +52,13 @@ export default function Header({collections, storeName}) {
             >
               {storeName}
             </Link>
-            <CartToggle
-              handleClick={() => {
-                if (isMobileNavOpen) setIsMobileNavOpen(false);
-              }}
-            />
+            <div className="flex justify-end items-center">
+              <CartToggle
+                handleClick={() => {
+                  if (isMobileNavOpen) setIsMobileNavOpen(false);
+                }}
+              />
+            </div>
           </div>
           <Navigation collections={collections} storeName={storeName} />
         </div>

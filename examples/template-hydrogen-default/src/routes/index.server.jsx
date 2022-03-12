@@ -18,19 +18,23 @@ import ProductCard from '../components/ProductCard';
 import Welcome from '../components/Welcome.server';
 import {Suspense} from 'react';
 
-export default function Index({country = {isoCode: 'US'}}) {
+export default function Index({localizationContext}) {
+  console.log({localizationContext});
   return (
-    <Layout hero={<GradientBackground />}>
+    <Layout
+      hero={<GradientBackground />}
+      localizationContext={localizationContext}
+    >
       <Suspense fallback={null}>
         <SeoForHomepage />
       </Suspense>
       <div className="relative mb-12">
         <Welcome />
         <Suspense fallback={<BoxFallback />}>
-          <FeaturedProductsBox country={country} />
+          <FeaturedProductsBox localizationContext={localizationContext} />
         </Suspense>
         <Suspense fallback={<BoxFallback />}>
-          <FeaturedCollectionBox country={country} />
+          <FeaturedCollectionBox localizationContext={localizationContext} />
         </Suspense>
       </div>
     </Layout>
@@ -63,12 +67,10 @@ function BoxFallback() {
   return <div className="bg-white p-12 shadow-xl rounded-xl mb-10 h-40"></div>;
 }
 
-function FeaturedProductsBox({country}) {
+function FeaturedProductsBox({localizationContext}) {
   const {data} = useShopQuery({
     query: QUERY,
-    variables: {
-      country: country.isoCode,
-    },
+    variables: localizationContext,
     preload: true,
   });
 
@@ -116,12 +118,10 @@ function FeaturedProductsBox({country}) {
   );
 }
 
-function FeaturedCollectionBox({country}) {
+function FeaturedCollectionBox({localizationContext}) {
   const {data} = useShopQuery({
     query: QUERY,
-    variables: {
-      country: country.isoCode,
-    },
+    variables: localizationContext,
     preload: true,
   });
 
@@ -199,7 +199,8 @@ const SEO_QUERY = gql`
 
 const QUERY = gql`
   query indexContent(
-    $country: CountryCode
+    $countryCode: CountryCode
+    $languageCode: LanguageCode
     $numCollections: Int = 2
     $numProducts: Int = 3
     $includeReferenceMetafieldDetails: Boolean = false
@@ -210,7 +211,7 @@ const QUERY = gql`
     $numProductVariantSellingPlanAllocations: Int = 0
     $numProductSellingPlanGroups: Int = 0
     $numProductSellingPlans: Int = 0
-  ) @inContext(country: $country) {
+  ) @inContext(country: $countryCode, language: $languageCode) {
     collections(first: $numCollections) {
       edges {
         node {

@@ -1,40 +1,48 @@
 import {useCallback, useMemo} from 'react';
-import {useAvailableCountries, useCountry} from '@shopify/hydrogen/client';
+import {useAvailableLanguages, useLanguage} from '@shopify/hydrogen/client';
 import {Listbox} from '@headlessui/react';
 
 /**
- * A client component that selects the appropriate country to display for products on a website
+ * A client component that selects the appropriate language to display for products on a website
  */
-export default function CountrySelector() {
-  const availableCountries = useAvailableCountries();
+export default function LanguageSelector() {
+  const availableLanguages = useAvailableLanguages();
 
-  const countries = useMemo(
-    () => [...availableCountries].sort((a, b) => a.name.localeCompare(b.name)),
-    [availableCountries],
+  const languages = useMemo(
+    () =>
+      [...availableLanguages].sort((a, b) =>
+        a.endonymName.localeCompare(b.endonymName),
+      ),
+    [availableLanguages],
   );
 
-  const [selectedCountry, setSelectedCountry] = useCountry();
+  const [selectedLanguage, setSelectedLanguage] = useLanguage();
 
-  const setCountry = useCallback(
+  const setLanguage = useCallback(
     (isoCode) => {
-      setSelectedCountry(
-        countries.find((country) => country.isoCode === isoCode),
+      setSelectedLanguage(
+        languages.find((language) => language.isoCode === isoCode),
       );
     },
-    [countries, setSelectedCountry],
+    [languages, setSelectedLanguage],
   );
 
-  if (countries.length <= 1) {
+  if (languages.length <= 1) {
     return null;
   }
 
   return (
     <div className="hidden lg:block">
-      <Listbox onChange={setCountry}>
+      <Listbox onChange={setLanguage}>
         {({open}) => (
           <>
             <Listbox.Button className="font-medium text-sm h-8 p-2 flex items-center">
-              <span className="mr-4">{selectedCountry.name}</span>
+              <span className="mr-4">
+                {titleCase(
+                  selectedLanguage.endonymName,
+                  selectedLanguage.isoCode,
+                )}
+              </span>
               <ArrowIcon isOpen={open} />
             </Listbox.Button>
 
@@ -44,22 +52,22 @@ export default function CountrySelector() {
                   disabled
                   className="p-2 text-md text-left font-medium uppercase"
                 >
-                  Country
+                  Language
                 </Listbox.Option>
-                {countries.map((country) => {
+                {languages.map((language) => {
                   const isSelected =
-                    country.isoCode === selectedCountry.isoCode;
+                    language.isoCode === selectedLanguage.isoCode;
                   return (
                     <Listbox.Option
-                      key={country.isoCode}
-                      value={country.isoCode}
+                      key={language.isoCode}
+                      value={language.isoCode}
                     >
                       {({active}) => (
                         <div
                           className={`w-36 py-2 px-3 flex justify-between items-center text-left cursor-pointer rounded
                           ${active ? 'bg-gray-200' : null}`}
                         >
-                          {country.name}
+                          {titleCase(language.endonymName, language.isoCode)}
                           {isSelected ? <CheckIcon /> : null}
                         </div>
                       )}
@@ -117,4 +125,8 @@ export function ArrowIcon({isOpen}) {
       />
     </svg>
   );
+}
+
+function titleCase(string, locale) {
+  return string.charAt(0).toLocaleUpperCase(locale) + string.slice(1);
 }

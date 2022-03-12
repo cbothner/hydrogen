@@ -3,6 +3,7 @@ import {Link} from '@shopify/hydrogen/client';
 import {FocusTrap} from '@headlessui/react';
 
 import MobileCountrySelector from './MobileCountrySelector.client';
+import MobileLanguageSelector from './MobileLanguageSelector.client';
 import OpenIcon from './OpenIcon';
 
 let scrollPosition = 0;
@@ -50,6 +51,7 @@ export default function MobileNavigation({collections, isOpen, setIsOpen}) {
               ))}
             </ul>
             <MobileCountrySelector />
+            <MobileLanguageSelector />
           </div>
         ) : null}
       </OpenFocusTrap>

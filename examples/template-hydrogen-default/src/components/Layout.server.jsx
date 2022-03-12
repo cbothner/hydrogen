@@ -15,11 +15,12 @@ import {Suspense} from 'react';
 /**
  * A server component that defines a structure and organization of a page that can be used in different parts of the Hydrogen app
  */
-export default function Layout({children, hero}) {
+export default function Layout({children, hero, localizationContext}) {
   const {data} = useShopQuery({
     query: QUERY,
     variables: {
       numCollections: 3,
+      ...localizationContext,
     },
     cache: CacheHours(),
     preload: '*',
@@ -29,7 +30,7 @@ export default function Layout({children, hero}) {
   const storeName = data ? data.shop.name : '';
 
   return (
-    <LocalizationProvider preload="*">
+    <LocalizationProvider preload="*" localizationContext={localizationContext}>
       <div className="absolute top-0 left-0">
         <a
           href="#mainContent"
@@ -57,7 +58,11 @@ export default function Layout({children, hero}) {
 }
 
 const QUERY = gql`
-  query layoutContent($numCollections: Int!) {
+  query layoutContent(
+    $countryCode: CountryCode
+    $languageCode: LanguageCode
+    $numCollections: Int!
+  ) @inContext(country: $countryCode, language: $languageCode) {
     shop {
       name
     }

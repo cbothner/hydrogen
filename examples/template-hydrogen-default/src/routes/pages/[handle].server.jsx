@@ -5,9 +5,12 @@ import gql from 'graphql-tag';
 import Layout from '../../components/Layout.server';
 import NotFound from '../../components/NotFound.server';
 
-export default function Page({params}) {
+export default function Page({params, localizationContext}) {
   const {handle} = params;
-  const {data} = useShopQuery({query: QUERY, variables: {handle}});
+  const {data} = useShopQuery({
+    query: QUERY,
+    variables: {handle: decodeURIComponent(handle), ...localizationContext},
+  });
 
   if (!data.pageByHandle) {
     return <NotFound />;
@@ -16,11 +19,11 @@ export default function Page({params}) {
   const page = data.pageByHandle;
 
   return (
-    <Layout>
+    <Layout localizationContext={localizationContext}>
       <Seo type="page" data={page} />
       <h1 className="text-2xl font-bold">{page.title}</h1>
       <div
-        dangerouslySetInnerHTML={{_html: page.body}}
+        dangerouslySetInnerHTML={{__html: page.body}}
         className="prose mt-8"
       />
     </Layout>
@@ -28,7 +31,11 @@ export default function Page({params}) {
 }
 
 const QUERY = gql`
-  query PageDetails($handle: String!) {
+  query PageDetails(
+    $handle: String!
+    $countryCode: CountryCode
+    $languageCode: LanguageCode
+  ) @inContext(country: $countryCode, language: $languageCode) {
     pageByHandle(handle: $handle) {
       title
       body

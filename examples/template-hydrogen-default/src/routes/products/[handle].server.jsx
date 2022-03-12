@@ -9,7 +9,7 @@ import ProductDetails from '../../components/ProductDetails.client';
 import NotFound from '../../components/NotFound.server';
 import Layout from '../../components/Layout.server';
 
-export default function Product({country = {isoCode: 'US'}}) {
+export default function Product({localizationContext}) {
   const {handle} = useRouteParams();
 
   const {
@@ -17,8 +17,8 @@ export default function Product({country = {isoCode: 'US'}}) {
   } = useShopQuery({
     query: QUERY,
     variables: {
-      country: country.isoCode,
       handle,
+      ...localizationContext,
     },
     preload: true,
   });
@@ -28,7 +28,7 @@ export default function Product({country = {isoCode: 'US'}}) {
   }
 
   return (
-    <Layout>
+    <Layout localizationContext={localizationContext}>
       <Seo type="product" data={product} />
       <ProductDetails product={product} />
     </Layout>
@@ -37,7 +37,8 @@ export default function Product({country = {isoCode: 'US'}}) {
 
 const QUERY = gql`
   query product(
-    $country: CountryCode
+    $countryCode: CountryCode
+    $languageCode: LanguageCode
     $handle: String!
     $includeReferenceMetafieldDetails: Boolean = true
     $numProductMetafields: Int = 20
@@ -47,7 +48,7 @@ const QUERY = gql`
     $numProductVariantSellingPlanAllocations: Int = 0
     $numProductSellingPlanGroups: Int = 0
     $numProductSellingPlans: Int = 0
-  ) @inContext(country: $country) {
+  ) @inContext(country: $countryCode, language: $languageCode) {
     product: product(handle: $handle) {
       id
       vendor

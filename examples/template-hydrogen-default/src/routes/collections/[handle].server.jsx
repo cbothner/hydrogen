@@ -12,7 +12,7 @@ import ProductCard from '../../components/ProductCard';
 import NotFound from '../../components/NotFound.server';
 
 export default function Collection({
-  country = {isoCode: 'US'},
+  localizationContext,
   collectionProductCount = 24,
   params,
 }) {
@@ -21,8 +21,8 @@ export default function Collection({
     query: QUERY,
     variables: {
       handle,
-      country: country.isoCode,
       numProducts: collectionProductCount,
+      ...localizationContext,
     },
     preload: true,
   });
@@ -36,7 +36,7 @@ export default function Collection({
   const hasNextPage = data.collection.products.pageInfo.hasNextPage;
 
   return (
-    <Layout>
+    <Layout localizationContext={localizationContext}>
       {/* the seo object will be expose in API version 2022-04 or later */}
       <Seo type="collection" data={collection} />
       <h1 className="font-bold text-4xl md:text-5xl text-gray-900 mb-6 mt-6">
@@ -66,7 +66,8 @@ export default function Collection({
 const QUERY = gql`
   query CollectionDetails(
     $handle: String!
-    $country: CountryCode
+    $countryCode: CountryCode
+    $languageCode: LanguageCode
     $numProducts: Int!
     $includeReferenceMetafieldDetails: Boolean = false
     $numProductMetafields: Int = 0
@@ -76,7 +77,7 @@ const QUERY = gql`
     $numProductVariantSellingPlanAllocations: Int = 0
     $numProductSellingPlanGroups: Int = 0
     $numProductSellingPlans: Int = 0
-  ) @inContext(country: $country) {
+  ) @inContext(country: $countryCode, language: $languageCode) {
     collection(handle: $handle) {
       id
       title
