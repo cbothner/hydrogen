@@ -1,4 +1,10 @@
-import React, {ReactNode, useMemo, useState, useCallback} from 'react';
+import React, {
+  ReactNode,
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+} from 'react';
 import {LocalizationContext, Localization} from './LocalizationContext.client';
 import {ServerStateContextValue} from '../../foundation/ServerStateProvider';
 import {useServerState} from '../../foundation/useServerState';
@@ -14,26 +20,66 @@ export default function LocalizationClientProvider({
   const [country, setCountry] = useState<Localization['country']>(
     localization.country
   );
-
-  const [availableCountries] = useState<Localization['availableCountries']>(
-    localization.availableCountries
+  const [language, setLanguage] = useState<Localization['language']>(
+    localization.language
   );
 
-  const setter = useCallback(
+  const {availableCountries, availableLanguages} = localization;
+
+  const setLocalizationContext = useCallback(
+    ({
+      country,
+      language,
+    }: {
+      country?: Localization['country'];
+      language?: Localization['language'];
+    }) => {
+      setServerState('localizationContext', {
+        countryCode: country?.isoCode || localization.country.isoCode,
+        languageCode: language?.isoCode || localization.language.isoCode,
+      });
+    },
+    [localization, setServerState]
+  );
+
+  const countrySetter = useCallback(
     (country: Localization['country']) => {
       setCountry(country);
-      setServerState('country', country);
+      setLocalizationContext({country});
     },
-    [setServerState]
+    [setLocalizationContext]
   );
+  const languageSetter = useCallback(
+    (language: Localization['language']) => {
+      setLanguage(language);
+      setLocalizationContext({language});
+    },
+    [setLocalizationContext]
+  );
+
+  useEffect(() => {
+    setCountry(localization.country);
+    setLanguage(localization.language);
+    setLocalizationContext(localization);
+  }, [localization.country, localization.language]);
 
   const contextValue = useMemo(() => {
     return {
       country,
-      setCountry: setter,
+      setCountry: countrySetter,
       availableCountries,
+      language,
+      setLanguage: languageSetter,
+      availableLanguages,
     };
-  }, [country, setter, availableCountries]);
+  }, [
+    country,
+    countrySetter,
+    availableCountries,
+    language,
+    languageSetter,
+    availableLanguages,
+  ]);
 
   return (
     <LocalizationContext.Provider value={contextValue}>

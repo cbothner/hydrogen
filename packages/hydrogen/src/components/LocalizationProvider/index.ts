@@ -1,3 +1,5 @@
 export {LocalizationProvider} from './LocalizationProvider.server';
 export {useCountry} from '../../hooks/useCountry/useCountry';
 export {useAvailableCountries} from '../../hooks/useAvailableCountries/useAvailableCountries';
+export {useLanguage} from '../../hooks/useLanguage/useLanguage';
+export {useAvailableLanguages} from '../../hooks/useAvailableLanguages/useAvailableLanguages';

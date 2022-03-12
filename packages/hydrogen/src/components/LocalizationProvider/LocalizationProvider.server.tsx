@@ -1,6 +1,7 @@
 import React, {ReactNode} from 'react';
 import LocalizationClientProvider from './LocalizationClientProvider.client';
 import {useShopQuery} from '../../hooks/useShopQuery';
+import * as Types from '../../graphql/types/types';
 import {LocalizationQuery} from './LocalizationQuery';
 import {Localization} from '../../graphql/graphql-constants';
 import {CacheDays} from '../../framework/CachingStrategy';
@@ -14,6 +15,11 @@ export interface LocalizationProviderProps {
    * or `'*'` to preload the query for all requests.
    */
   preload: PreloadOptions;
+
+  localizationContext: {
+    countryCode: Types.CountryCode;
+    languageCode: Types.LanguageCode;
+  };
 }
 
 /**
@@ -25,18 +31,23 @@ export interface LocalizationProviderProps {
  * The `isoCode` of the `country` can be used in the Storefront API's
  * `@inContext` directive as the `country` value.
  */
-export function LocalizationProvider(props: LocalizationProviderProps) {
+export function LocalizationProvider({
+  children,
+  preload,
+  localizationContext,
+}: LocalizationProviderProps) {
   const {
     data: {localization},
   } = useShopQuery<LocalizationQuery>({
     query: Localization,
+    variables: localizationContext,
     cache: CacheDays(),
-    preload: props.preload,
+    preload,
   });
 
   return (
     <LocalizationClientProvider localization={localization}>
-      {props.children}
+      {children}
     </LocalizationClientProvider>
   );
 }

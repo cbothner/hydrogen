@@ -7,12 +7,20 @@ query Localization {
         isoCode
       }
     }
+    language {
+      isoCode
+      endonymName
+    }
     availableCountries {
       isoCode
       name
       currency {
         isoCode
       }
+    }
+    availableLanguages {
+      isoCode
+      endonymName
     }
   }
 }

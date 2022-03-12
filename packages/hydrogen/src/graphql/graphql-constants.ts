@@ -2042,7 +2042,10 @@ export const ImageFragment = `fragment ImageFragment on Image {
 
 *```
 */
-export const Localization = `query Localization {
+export const Localization = `query Localization(
+  $countryCode: CountryCode,
+  $languageCode: LanguageCode
+) @inContext(country: $countryCode, language: $languageCode) {
   localization {
     country {
       isoCode
@@ -2051,12 +2054,20 @@ export const Localization = `query Localization {
         isoCode
       }
     }
+    language {
+      isoCode
+      endonymName
+    }
     availableCountries {
       isoCode
       name
       currency {
         isoCode
       }
+    }
+    availableLanguages {
+      isoCode
+      endonymName
     }
   }
 }

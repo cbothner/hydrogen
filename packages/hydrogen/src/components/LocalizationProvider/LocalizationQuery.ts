@@ -13,10 +13,20 @@ export type LocalizationQuery = {__typename?: 'QueryRoot'} & {
       Types.Country,
       'isoCode' | 'name'
     > & {currency: {__typename?: 'Currency'} & Pick<Types.Currency, 'isoCode'>};
+    language: {__typename?: 'Language'} & Pick<
+      Types.Language,
+      'isoCode' | 'endonymName'
+    >;
     availableCountries: Array<
       {__typename?: 'Country'} & Pick<Types.Country, 'isoCode' | 'name'> & {
           currency: {__typename?: 'Currency'} & Pick<Types.Currency, 'isoCode'>;
         }
+    >;
+    availableLanguages: Array<
+      {__typename?: 'Language'} & Pick<
+        Types.Language,
+        'isoCode' | 'endonymName'
+      >
     >;
   };
 };

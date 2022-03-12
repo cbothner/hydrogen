@@ -35,4 +35,6 @@ export {BuyNowButton} from './BuyNowButton';
 export {ShopPayButton} from './ShopPayButton';
 export {useAvailableCountries} from '../hooks/useAvailableCountries';
 export {useCountry} from '../hooks/useCountry';
+export {useAvailableLanguages} from '../hooks/useAvailableLanguages';
+export {useLanguage} from '../hooks/useLanguage';
 export {Seo} from './Seo';
