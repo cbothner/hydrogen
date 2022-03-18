@@ -12,6 +12,7 @@ import {ErrorBoundary} from 'react-error-boundary';
 import {useServerResponse} from './framework/Hydration/rsc';
 import {ServerStateProvider} from './foundation/ServerStateProvider';
 import type {DevServerMessage} from './utilities/devtools';
+import {DevTools} from './components/DevTools';
 
 const renderHydrogen: ClientHandler = async (ClientWrapper, config) => {
   const root = document.getElementById('root');
@@ -36,13 +37,16 @@ const renderHydrogen: ClientHandler = async (ClientWrapper, config) => {
 
   hydrateRoot(
     root,
-    <RootComponent>
-      <ErrorBoundary FallbackComponent={Error}>
-        <Suspense fallback={null}>
-          <Content clientWrapper={ClientWrapper} />
-        </Suspense>
-      </ErrorBoundary>
-    </RootComponent>
+    <>
+      <RootComponent>
+        <ErrorBoundary FallbackComponent={Error}>
+          <Suspense fallback={null}>
+            <Content clientWrapper={ClientWrapper} />
+          </Suspense>
+        </ErrorBoundary>
+      </RootComponent>
+      <DevTools />
+    </>
   );
 };
 

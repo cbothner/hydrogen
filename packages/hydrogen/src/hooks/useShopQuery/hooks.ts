@@ -101,7 +101,7 @@ export function useShopQuery<T>({
 
   if (
     import.meta.env.DEV &&
-    log.options().showUnusedQueryProperties &&
+    // log.options().showUnusedQueryProperties &&
     query &&
     typeof query !== 'string' &&
     data?.data
