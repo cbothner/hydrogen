@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 const {prompt} = require('enquirer');
-const {yellow} = require('kolorist');
+const {cyan, green} = require('kolorist');
 const {copy} = require('./scripts/utils.js');
 
 const cwd = process.cwd();
@@ -138,12 +138,7 @@ async function init() {
 
   const pkgManager = /yarn/.test(process.env.npm_execpath) ? 'yarn' : 'npm';
 
-  console.log(`\nDone. Now:\n`);
-  console.log(
-    `  Update ${yellow(
-      packageName + '/shopify.config.js'
-    )} with the values for your storefront. If you want to test your Hydrogen app using the demo store, you can skip this step.`
-  );
+  console.log(`\n${green('Done')}\n`);
   console.log(`\nand then run:\n`);
   if (root !== cwd) {
     console.log(`  cd ${path.relative(cwd, root)}`);
@@ -155,9 +150,14 @@ async function init() {
    */
   const usesYarn = pkgManager === 'yarn' || process.env.LOCAL;
 
-  console.log(`  ${usesYarn ? `yarn` : `npm install --legacy-peer-deps`}`);
-  console.log(`  ${usesYarn ? `yarn dev` : `npm run dev`}`);
+  console.log(cyan(`  ${usesYarn ? `yarn` : `npm install --legacy-peer-deps`}`));
+  console.log(cyan(`  ${usesYarn ? `yarn dev` : `npm run dev`}`));
   console.log();
+  console.log(
+    `  Update ${cyan(
+      packageName + '/shopify.config.js'
+    )} with the values for your storefront. If you want to test your Hydrogen app using the demo store, you can skip this step.`
+  );
 }
 
 async function getValidPackageName(projectName) {
